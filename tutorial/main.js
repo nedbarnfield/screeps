@@ -1,7 +1,24 @@
 var roleHarvester = require('role.harvester');
 var roleUpgrader = require('role.upgrader');
 var roleBuilder = require('role.builder');
+const { filter } = require('lodash');
 
+/**
+ * Key points to consider:
+ * Memory management:
+ * - What is an ideal number of creeps?
+ * CPU usage and code effeciency:
+ * - Clean code is a must.
+ * - Can you profile the code?
+ * Resource sustainability:
+ * - What happens when an energy source is depleted?
+ * - Is there a limit to extraction rates in a tick?
+ * Offence:
+ * - Army?
+ * Defence:
+ * - How many towers and where should they be placed?
+ * - Auto repair scripts
+ */
 
 module.exports.loop = function () {
     /**
@@ -21,7 +38,21 @@ module.exports.loop = function () {
     // for(var name in Game.rooms){
     //     console.log('Room "'+name+'" has '+Game.rooms[name].energyAvailable+' energy available.');
     // }
-    
+
+    // Towers both destroy and heal!
+    var tower = Game.getObjectById('6f7b51b8c7ad18b6763dce63');
+    if(tower){
+        var closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {filter: (structure) => structure.hits < structure.hitsMax});
+        if(closestDamagedStructure){
+            tower.repair(closestDamagedStructure);
+        }
+        var closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+        if(closestHostile){
+            tower.attack(closestHostile);
+        }
+    }
+
+
     // Output the number of harvesters to the console
     var harvesters = _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester');
     console.log('Harvesters: ' + harvesters.length);
