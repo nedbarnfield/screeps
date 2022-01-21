@@ -6,10 +6,13 @@ const { filter } = require('lodash');
 /**
  * Key points to consider:
  * Memory management:
+ * - What metrics do I need to keep on top of?
+ *      - What needs to happen when those metrics reach their limits?
  * - What is an ideal number of creeps?
  * CPU usage and code effeciency:
  * - Clean code is a must.
  * - Can you profile the code?
+ * - Until extensions are filled produce small creeps, otherwise replace with larger ones
  * Resource sustainability:
  * - What happens when an energy source is depleted?
  * - Is there a limit to extraction rates in a tick?
@@ -21,42 +24,19 @@ const { filter } = require('lodash');
  */
 
 module.exports.loop = function () {
-    /**
-     * While the creep may die it's memory and name still exist.
-     * If deceased creep's memory is not wiped before the operations
-     * for each tick there may be memory overflow and duplication of names
-     */ 
-         for(var name in Memory.creeps){
-            if(!Game.creeps[name]){
-                delete Memory.creeps[name];
-                console.log('Clearing non-existing creep memory:', name);
-            }
-        }
-    /**
-     * Console logging for available energy in each room
-     */
-    // for(var name in Game.rooms){
-    //     console.log('Room "'+name+'" has '+Game.rooms[name].energyAvailable+' energy available.');
-    // }
+    // Memory management
 
-    // Towers both destroy and heal!
-    var tower = Game.getObjectById('6f7b51b8c7ad18b6763dce63');
-    if(tower){
-        var closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {filter: (structure) => structure.hits < structure.hitsMax});
-        if(closestDamagedStructure){
-            tower.repair(closestDamagedStructure);
-        }
-        var closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
-        if(closestHostile){
-            tower.attack(closestHostile);
-        }
+
+    // There should be two modes - defence and expansion
+    var hostiles = Game.rooms[roomName].find(FIND_HOSTILE_CREEPS);
+    if(hostiles.length > 0){
+        defendRoom(Game.room);
+    }
+    else{
+        expandRoom(Game.room);
     }
 
-
-    // Output the number of harvesters to the console
-    var harvesters = _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester');
-    console.log('Harvesters: ' + harvesters.length);
-
+    
     /**
      * If the number of harvesters drops below 2 the Spawn will create a new
      * creep using the role and timestamp as a name, assigning it with the role

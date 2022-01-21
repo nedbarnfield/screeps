@@ -3,6 +3,26 @@
  * creep the easiest way is to just count the number of required creeps,
  * and if it becomes less than a defined value, to start spawning.
  * */ 
+
+
+
+
+
+TODO:
+Create a tower module and import functionality there.
+Get a list of towers and use a for loop to trigger action for all of them
+
+
+
+
+
+
+
+
+
+
+
+
  var roleHarvester = require('role.harvester');
  var roleUpgrader = require('role.upgrader');
  
