@@ -105,3 +105,4 @@ dist
 
 # Scratchfiles
 tutorial/scratch.js
+tutorial/.prettierrc
