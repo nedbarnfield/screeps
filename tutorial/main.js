@@ -36,6 +36,10 @@ module.exports.loop = function () {
         expandRoom(Game.room);
     }
 
+    // TODO: Work out the best mix of automated screep development
+    // Starting game will require 1 harvester and 1 upgrader.
+    // When do you swap them out and develop them further?
+
     
     /**
      * If the number of harvesters drops below 2 the Spawn will create a new
