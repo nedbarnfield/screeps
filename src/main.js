@@ -20,6 +20,7 @@ module.exports.loop = function () {
     var repairers = _.filter(Game.creeps, (creep) => creep.memory.role == 'repairer');
 
     // Lower level room controller can only make basic creeps
+    // Add in condition to only generate a creep when max capacity has been reached rather than test every tick - && (Game.spawns['Spawn1'].store[RESOURCE_ENERGY] == Game.spawns['Spawn1'].store.getCapacity[RESOURCE_ENERGY])
     if(!Game.spawns['Spawn1'].spawning){
         if(harvesters.length < 4){
             var newName = 'Harvester' + Game.time;

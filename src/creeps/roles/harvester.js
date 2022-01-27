@@ -11,13 +11,26 @@ var roleHarvester = {
      * */
 
     run: function (creep) {
-        if (creep.store.getFreeCapacity() > 0) {
+        // Set flags to ensure all resources are consumed before switching tasks
+        if(!creep.memory.harvesting && creep.store[RESOURCE_ENERGY] == 0){
+            creep.memory.harvesting = true;
+            creep.say('🔄 harvest');
+        }
+        if (creep.store.harvesting && creep.store.getFreeCapacity() == 0) {
+            creep.memory.harvesting = false;
+	        creep.say('🚧 store');
+        }
+
+
+        // Harvest
+        if(creep.memory.harvesting){
             var sources = creep.room.find(FIND_SOURCES);
             if (creep.harvest(sources[1]) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(sources[1], { visualizePathStyle: { stroke: '#ffaa00' } });
             }
         }
         else {
+            // Deliver resources until RESOURCE_ENERGY == 0
             var targets = creep.room.find(FIND_STRUCTURES, {
                 filter: (structure) => {
                     return (
