@@ -31,6 +31,7 @@ var roleBuilder = {
             }
             // then build roads
             else{
+                var targets = _.filter(creep.room.find(FIND_CONSTRUCTION_SITES), (structure) => structure.structureType != STRUCTURE_EXTENSION);
                 if(creep.build(targets[0]) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(targets[0], {visualizePathStyle: {stroke: '#ffffff'}});
                 }
