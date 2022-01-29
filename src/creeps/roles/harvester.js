@@ -12,21 +12,25 @@ var roleHarvester = {
 
     run: function (creep) {
         // Set flags to ensure all resources are consumed before switching tasks
-        if(!creep.memory.harvesting && creep.store[RESOURCE_ENERGY] == 0){
-            creep.memory.harvesting = true;
-            creep.say('🔄 harvest');
-        }
-        if (creep.store.harvesting && creep.store.getFreeCapacity() == 0) {
+
+        // If the creep has full capacity it needs to stop harvesting and go store energy
+        if(creep.memory.harvesting && creep.store.getFreeCapacity() == 0){
             creep.memory.harvesting = false;
-	        creep.say('🚧 store');
+            creep.say('🚧 store');
+        }
+
+        // If the creep has no energy left then it needs to go harvest
+        if (!creep.store.harvesting &&  creep.store[RESOURCE_ENERGY] == 0) {
+            creep.memory.harvesting = true;
+	        creep.say('🔄 harvest');
         }
 
 
         // Harvest
-        if(creep.memory.harvesting){
-            var sources = creep.room.find(FIND_SOURCES);
-            if (creep.harvest(sources[1]) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(sources[1], { visualizePathStyle: { stroke: '#ffaa00' } });
+        if(creep.memory.harvesting == true){
+            var source = creep.pos.findClosestByPath(FIND_SOURCES);
+            if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(source, { visualizePathStyle: { stroke: '#ffaa00' }, reusePath: 10 });
             }
         }
         else {
@@ -35,7 +39,9 @@ var roleHarvester = {
                 filter: (structure) => {
                     return (
                         // Structures that require energy
-                        structure.structureType == STRUCTURE_EXTENSION || structure.structureType == STRUCTURE_SPAWN ||
+                        structure.structureType == STRUCTURE_SPAWN ||
+                        structure.structureType == STRUCTURE_EXTENSION ||
+                        structure.structureType == STRUCTURE_CONTAINER || 
                         structure.structureType == STRUCTURE_TOWER
                         ) 
                         // Where the structure is not at full energy capacity

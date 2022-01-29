@@ -21,6 +21,8 @@ var roleRepairer = {
 	        creep.say('🛠️ repair');
 	    }
 
+        // Currently sorting each tick and repairing a different object each time until they are all the same health.
+        // Needs to store an object id and then heal it until it is at full health
 	    if(creep.memory.repairing) {
         	const targets = creep.room.find(FIND_STRUCTURES, {
                 filter: object => object.hits < object.hitsMax
@@ -35,9 +37,9 @@ var roleRepairer = {
             }
 	    }
 	    else {
-	        var sources = creep.room.find(FIND_SOURCES);
-            if(creep.harvest(sources[1]) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(sources[1], {visualizePathStyle: {stroke: '#ffaa00'}});
+            var source = creep.pos.findClosestByPath(FIND_SOURCES);
+            if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(source, { visualizePathStyle: { stroke: '#ffaa00' }, reusePath: 10 });
             }
 	    }
 	}

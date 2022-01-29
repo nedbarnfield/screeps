@@ -21,22 +21,38 @@ module.exports.loop = function () {
 
     // Lower level room controller can only make basic creeps
     // Add in condition to only generate a creep when max capacity has been reached rather than test every tick - && (Game.spawns['Spawn1'].store[RESOURCE_ENERGY] == Game.spawns['Spawn1'].store.getCapacity[RESOURCE_ENERGY])
+    var available_energy = _.filter(Game.structures, (structure) => structure.structureType == STRUCTURE_EXTENSION);
+    var smallCreep = [WORK, CARRY, MOVE];
+    var mediumCreep = [WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE];
+    var largeCreep = [WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE];
+    if(available_energy.length < 1){
+        var creepSize = smallCreep;
+    }
+    else if(available_energy.length < 5){
+        var creepSize = mediumCreep;
+    }
+    else{
+        var creepSize = largeCreep;
+    }
+
+
     if(!Game.spawns['Spawn1'].spawning){
-        if(harvesters.length < 4){
+        if(harvesters.length < 2){
+            
             var newName = 'Harvester' + Game.time;
-            Game.spawns['Spawn1'].spawnCreep([WORK, CARRY, CARRY, MOVE, MOVE], newName, {memory: {role: 'harvester'}});
+            Game.spawns['Spawn1'].spawnCreep(creepSize, newName, {memory: {role: 'harvester'}});
         }
-        else if(upgraders.length < 4){
+        else if(upgraders.length < 3){
             var newName = 'Upgrader' + Game.time;
-            Game.spawns['Spawn1'].spawnCreep([WORK, CARRY, CARRY, MOVE, MOVE], newName, {memory: {role: 'upgrader'}});
+            Game.spawns['Spawn1'].spawnCreep(creepSize, newName, {memory: {role: 'upgrader'}});
         }
-        else if(builders.length < 4){
+        else if(builders.length < 2){
             var newName = 'Builder' + Game.time;
-            Game.spawns['Spawn1'].spawnCreep([WORK, CARRY, CARRY, MOVE, MOVE], newName, {memory: {role: 'builder'}});
+            Game.spawns['Spawn1'].spawnCreep(creepSize, newName, {memory: {role: 'builder'}});
         }
-        else if(repairers.length < 1){
+        else if(repairers.length < 2){
             var newName = 'Repairer' + Game.time;
-            Game.spawns['Spawn1'].spawnCreep([WORK, CARRY, CARRY, MOVE, MOVE], newName, {memory: {role: 'repairer'}});
+            Game.spawns['Spawn1'].spawnCreep(creepSize, newName, {memory: {role: 'repairer'}});
         }
     }
     else{     
