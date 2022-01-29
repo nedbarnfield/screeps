@@ -53,6 +53,14 @@ var roleHarvester = {
                     creep.moveTo(targets[0], { visualizePathStyle: { stroke: '#ffffff' } });
                 }
             }
+            else{
+                // If there are no targets that need energy go upgrade
+                if(creep.memory.upgrading){
+                    if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE){
+                        creep.moveTo(creep.room.controller);
+                    }
+                }
+            }
         }
     }
 };
