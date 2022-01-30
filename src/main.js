@@ -2,7 +2,9 @@ var roleHarvester = require('creeps_roles_harvester');
 var roleUpgrader = require('creeps_roles_upgrader');
 var roleBuilder = require('creeps_roles_builder');
 var roleRepairer = require('creeps_roles_repairer');
+var roleRepairer = require('creeps_roles_repairer');
 const { filter } = require('lodash');
+const towerAttack = require('creeps_towers_towerAttack');
 
 module.exports.loop = function () {
     // Memory management
@@ -13,18 +15,35 @@ module.exports.loop = function () {
         }
     }
 
+    // TODO: Implement a defend and grow method to prioritise defence (restocking energy to towers, ramparts, etc) when attackers are detected
+    // for(roomName in Game.rooms){
+    //     var hostiles = Game.rooms[roomName].find(FIND_HOSTILE_CREEPS);
+    //     if(hostiles.length > 0){
+    //         var username = hostiles[0].owner.username;
+    //         Game.notify(`User ${username} spotted in room ${roomName}`);
+    //         defendRoom(roomName);
+    //     }
+    //     else{
+    //         growRoom(roomName);
+    //     }
+    // }
+
     // Maintain constant workforce
     var harvesters = _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester');
     var upgraders = _.filter(Game.creeps, (creep) => creep.memory.role == 'upgrader');
     var builders = _.filter(Game.creeps, (creep) => creep.memory.role == 'builder');
     var repairers = _.filter(Game.creeps, (creep) => creep.memory.role == 'repairer');
+    // TODO: Needs to be spawn agnostic
+    var towers = Game.spawns['Spawn1'].room.find(FIND_MY_STRUCTURES, {
+        filter: { structureType: STRUCTURE_TOWER }
+    });
 
     // Lower level room controller can only make basic creeps
     // Add in condition to only generate a creep when max capacity has been reached rather than test every tick - && (Game.spawns['Spawn1'].store[RESOURCE_ENERGY] == Game.spawns['Spawn1'].store.getCapacity[RESOURCE_ENERGY])
     var available_energy = _.filter(Game.structures, (structure) => structure.structureType == STRUCTURE_EXTENSION);
     var smallCreep = [WORK, CARRY, MOVE];
     var mediumCreep = [WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE];
-    var largeCreep = [WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE];
+    var largeCreep = [WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE];
     if(available_energy.length < 1){
         var creepSize = smallCreep;
     }
@@ -46,7 +65,7 @@ module.exports.loop = function () {
             var newName = 'Upgrader' + Game.time;
             Game.spawns['Spawn1'].spawnCreep(creepSize, newName, {memory: {role: 'upgrader'}});
         }
-        else if(builders.length < 2){
+        else if(builders.length < 3){
             var newName = 'Builder' + Game.time;
             Game.spawns['Spawn1'].spawnCreep(creepSize, newName, {memory: {role: 'builder'}});
         }
@@ -86,4 +105,7 @@ module.exports.loop = function () {
             roleRepairer.run(creep);
         }
     }
+
+    // Attack the nearest enemy if any.
+    towers.forEach((tower) => towerAttack.run(tower));
 }
