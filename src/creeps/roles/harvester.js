@@ -28,10 +28,7 @@ var roleHarvester = {
 
         // Harvest
         if(creep.memory.harvesting == true){
-            var source = creep.pos.findClosestByPath(FIND_SOURCES);
-            if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(source, { visualizePathStyle: { stroke: '#ffaa00' }, reusePath: 10 });
-            }
+            goHarvest(creep);
         }
         else {
             // Deliver resources until RESOURCE_ENERGY == 0
@@ -64,5 +61,49 @@ var roleHarvester = {
         }
     }
 };
+
+function goHarvest(creep){
+    if(creep.memory.source){
+        if(creep.harvest(Game.getObjectById(creep.memory.source)) == ERR_NOT_IN_RANGE){
+            creep.moveTo(Game.getObjectById(creep.memory.source), { visualizePathStyle: { stroke: '#ffaa00' }, reusePath: 10 });
+        }
+    }
+    // If not search for one, save it, next tick it will move.
+    else{
+        var source = creep.pos.findClosestByPath(FIND_SOURCES);
+        creep.memory.source = source.id; 
+    }
+};
+
+
+// TODO: Debug this and implement
+function storeEnergy(creep){
+    if(!creep.memory.target){
+        var targets = creep.room.find(FIND_STRUCTURES, {
+            filter: (structure) => {
+                return (
+                    // Structures that require energy
+                    structure.structureType == STRUCTURE_SPAWN ||
+                    structure.structureType == STRUCTURE_EXTENSION ||
+                    structure.structureType == STRUCTURE_CONTAINER ||
+                    structure.structureType == STRUCTURE_STORAGE || 
+                    structure.structureType == STRUCTURE_TOWER
+                    ) 
+                    // Where the structure is not at full energy capacity
+                    && structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
+            }
+        })
+        creep.memory.target = targets[0].id;
+    };
+    
+    if(Game.getObjectById(creep.memory.target).store.getFreeCapacity() > 0){
+            if (creep.transfer(Game.getObjectById(creep.memory.target), RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(Game.getObjectById(creep.memory.target), {visualizePathStyle: { stroke: '#ffaa00' }, reusePath: 5 });
+            }
+    }
+    else{
+        creep.memory.target = null;
+    }
+}
 
 module.exports = roleHarvester;

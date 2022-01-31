@@ -43,7 +43,7 @@ module.exports.loop = function () {
     var available_energy = _.filter(Game.structures, (structure) => structure.structureType == STRUCTURE_EXTENSION);
     var smallCreep = [WORK, CARRY, MOVE];
     var mediumCreep = [WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE];
-    var largeCreep = [WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE];
+    var largeCreep = [WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE];
     if(available_energy.length < 1){
         var creepSize = smallCreep;
     }
