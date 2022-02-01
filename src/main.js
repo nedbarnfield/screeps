@@ -41,18 +41,20 @@ module.exports.loop = function () {
     });
 
     // Report on room stats
-    spawnManagement.spawnReporting('Spawn1');
+    if(Game.time % 10 == 0){
+        spawnManagement.spawnReporting('Spawn1');
+    }
 
     // Spawn creeps and maintain workforce!
     var activeCreeps = Object.keys(Game.creeps).length;
-    if(activeCreeps < 12 && (Game.spawns['Spawn1'].room.energyAvailable == Game.spawns['Spawn1'].room.energyCapacityAvailable)){
+    if(activeCreeps < 14 && (Game.spawns['Spawn1'].room.energyAvailable == Game.spawns['Spawn1'].room.energyCapacityAvailable)){
         if(harvesters.length != 4){
             spawnManagement.spawnCreepsWrapper('Spawn1', 'harvester');
         }
         else if(upgraders.length != 4){
             spawnManagement.spawnCreepsWrapper('Spawn1', 'upgrader');
         }
-        else if(builders.length != 2){
+        else if(builders.length != 4){
             spawnManagement.spawnCreepsWrapper('Spawn1', 'builder');
         }
         else if(repairers.length != 2){
@@ -61,9 +63,9 @@ module.exports.loop = function () {
     }
 
     // Display spawning creep info in room
-    // if(Game.spawns['Spawn1'].spawning){
-    //     spawnManagement.displaySpawnInfo('Spawn1');
-    // }
+    if(Game.spawns['Spawn1'].spawning){
+        spawnManagement.displaySpawnInfo('Spawn1');
+    }
 
     /**
      * The main loop takes a list of all available creeps and performs an
