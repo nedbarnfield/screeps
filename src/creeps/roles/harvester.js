@@ -1,4 +1,5 @@
 const { filter } = require("lodash");
+var resourceManagement = require('creeps_functions_resourceManagement');
 
 var roleHarvester = {
     /** 
@@ -13,7 +14,7 @@ var roleHarvester = {
     run: function (creep) {
         // Set flags to ensure all resources are consumed before switching tasks
 
-        // If the creep has full capacity it needs to stop harvesting and go store energy
+        // If creep at full capacity, stop harvesting and go store energy
         if(creep.memory.harvesting && creep.store.getFreeCapacity() == 0){
             creep.memory.harvesting = false;
             creep.say('🚧 store');
@@ -25,57 +26,12 @@ var roleHarvester = {
 	        creep.say('🔄 harvest');
         }
 
-        // Harvest
+        // Harvest or store
         if(creep.memory.harvesting == true){
-            goHarvest(creep);
+            resourceManagement.goHarvest(creep);
         }
-        // Store energy
         else {
-            storeEnergy(creep);
-        }
-    }
-};
-
-function goHarvest(creep){
-    // Harvest from located source
-    if(creep.memory.source){
-        if(creep.harvest(Game.getObjectById(creep.memory.source)) == ERR_NOT_IN_RANGE){
-            creep.moveTo(Game.getObjectById(creep.memory.source), { visualizePathStyle: { stroke: '#ffaa00' }, reusePath: 5 });
-        }
-    }
-    // If not source id not saved search for one
-    else{
-        var source = creep.pos.findClosestByPath(FIND_SOURCES);
-        creep.memory.source = source.id; 
-    }
-};
-
-
-function storeEnergy(creep){
-    if(creep.memory.target && Game.getObjectById(creep.memory.target).store.getFreeCapacity(RESOURCE_ENERGY) > 0){
-        if(creep.transfer(Game.getObjectById(creep.memory.target), RESOURCE_ENERGY) == ERR_NOT_IN_RANGE){
-                creep.moveTo(Game.getObjectById(creep.memory.target), {
-                    visualizePathStyle: { stroke: '#ffaa00' }, reusePath: 5});
-            }
-    }
-    else{
-        var targets = creep.room.find(FIND_STRUCTURES, {
-            filter: (structure) => {
-                return (
-                    // Structures that require energy
-                    structure.structureType == STRUCTURE_SPAWN ||
-                    structure.structureType == STRUCTURE_EXTENSION ||
-                    structure.structureType == STRUCTURE_CONTAINER ||
-                    structure.structureType == STRUCTURE_STORAGE || 
-                    structure.structureType == STRUCTURE_TOWER
-                    ) 
-                    // Where the structure is not at full energy capacity
-                    && structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
-            }
-        });
-        // Assign target id to memory
-        if(targets.length > 0){
-            creep.memory.target = targets[0].id;
+            resourceManagement.storeEnergy(creep);
         }
     }
 };

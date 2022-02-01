@@ -44,10 +44,10 @@ module.exports.loop = function () {
     var smallCreep = [WORK, CARRY, MOVE];
     var mediumCreep = [WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE];
     var largeCreep = [WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE];
-    if(available_energy.length < 1){
+    if(available_energy.length < 5){
         var creepSize = smallCreep;
     }
-    else if(available_energy.length < 5){
+    else if(available_energy.length >= 5 && available_energy.length <= 10){
         var creepSize = mediumCreep;
     }
     else{
@@ -56,20 +56,19 @@ module.exports.loop = function () {
 
 
     if(!Game.spawns['Spawn1'].spawning){
-        if(harvesters.length < 2){
-            
+        if(harvesters.length < 4){
             var newName = 'Harvester' + Game.time;
             Game.spawns['Spawn1'].spawnCreep(creepSize, newName, {memory: {role: 'harvester'}});
         }
-        else if(upgraders.length < 3){
+        else if(upgraders.length < 4){
             var newName = 'Upgrader' + Game.time;
             Game.spawns['Spawn1'].spawnCreep(creepSize, newName, {memory: {role: 'upgrader'}});
         }
-        else if(builders.length < 3){
+        else if(builders.length < 4){
             var newName = 'Builder' + Game.time;
             Game.spawns['Spawn1'].spawnCreep(creepSize, newName, {memory: {role: 'builder'}});
         }
-        else if(repairers.length < 2){
+        else if(repairers.length < 4){
             var newName = 'Repairer' + Game.time;
             Game.spawns['Spawn1'].spawnCreep(creepSize, newName, {memory: {role: 'repairer'}});
         }
