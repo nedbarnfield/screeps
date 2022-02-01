@@ -8,7 +8,7 @@ module.exports = {
         }
         // If not source id not saved search for one
         else{
-            var source = creep.pos.findClosestByPath(FIND_SOURCES);
+            var source = creep.pos.findClosestByPath(FIND_SOURCES_ACTIVE);
             creep.memory.source = source.id; 
         }
     },

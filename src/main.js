@@ -5,6 +5,7 @@ var roleRepairer = require('creeps_roles_repairer');
 var roleRepairer = require('creeps_roles_repairer');
 const { filter } = require('lodash');
 const towerAttack = require('creeps_towers_towerAttack');
+var spawnManagement = require('creeps_functions_spawnManagement');
 
 module.exports.loop = function () {
     // Memory management
@@ -33,55 +34,36 @@ module.exports.loop = function () {
     var upgraders = _.filter(Game.creeps, (creep) => creep.memory.role == 'upgrader');
     var builders = _.filter(Game.creeps, (creep) => creep.memory.role == 'builder');
     var repairers = _.filter(Game.creeps, (creep) => creep.memory.role == 'repairer');
+    // TODO: Create a container/roadworker class - have 1 of each repair and roadworker
     // TODO: Needs to be spawn agnostic
     var towers = Game.spawns['Spawn1'].room.find(FIND_MY_STRUCTURES, {
         filter: { structureType: STRUCTURE_TOWER }
     });
 
-    // Lower level room controller can only make basic creeps
-    // Add in condition to only generate a creep when max capacity has been reached rather than test every tick - && (Game.spawns['Spawn1'].store[RESOURCE_ENERGY] == Game.spawns['Spawn1'].store.getCapacity[RESOURCE_ENERGY])
-    var available_energy = _.filter(Game.structures, (structure) => structure.structureType == STRUCTURE_EXTENSION);
-    var smallCreep = [WORK, CARRY, MOVE];
-    var mediumCreep = [WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE];
-    var largeCreep = [WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE];
-    if(available_energy.length < 5){
-        var creepSize = smallCreep;
-    }
-    else if(available_energy.length >= 5 && available_energy.length <= 10){
-        var creepSize = mediumCreep;
-    }
-    else{
-        var creepSize = largeCreep;
+    // Report on room stats
+    spawnManagement.spawnReporting('Spawn1');
+
+    // Spawn creeps and maintain workforce!
+    var activeCreeps = Object.keys(Game.creeps).length;
+    if(activeCreeps < 12 && (Game.spawns['Spawn1'].room.energyAvailable == Game.spawns['Spawn1'].room.energyCapacityAvailable)){
+        if(harvesters.length != 4){
+            spawnManagement.spawnCreepsWrapper('Spawn1', 'harvester');
+        }
+        else if(upgraders.length != 4){
+            spawnManagement.spawnCreepsWrapper('Spawn1', 'upgrader');
+        }
+        else if(builders.length != 2){
+            spawnManagement.spawnCreepsWrapper('Spawn1', 'builder');
+        }
+        else if(repairers.length != 2){
+            spawnManagement.spawnCreepsWrapper('Spawn1', 'repairer');
+        }
     }
 
-
-    if(!Game.spawns['Spawn1'].spawning){
-        if(harvesters.length < 4){
-            var newName = 'Harvester' + Game.time;
-            Game.spawns['Spawn1'].spawnCreep(creepSize, newName, {memory: {role: 'harvester'}});
-        }
-        else if(upgraders.length < 4){
-            var newName = 'Upgrader' + Game.time;
-            Game.spawns['Spawn1'].spawnCreep(creepSize, newName, {memory: {role: 'upgrader'}});
-        }
-        else if(builders.length < 4){
-            var newName = 'Builder' + Game.time;
-            Game.spawns['Spawn1'].spawnCreep(creepSize, newName, {memory: {role: 'builder'}});
-        }
-        else if(repairers.length < 4){
-            var newName = 'Repairer' + Game.time;
-            Game.spawns['Spawn1'].spawnCreep(creepSize, newName, {memory: {role: 'repairer'}});
-        }
-    }
-    else{     
-        // Display name of screep being spawned
-        var spawningCreep = Game.creeps[Game.spawns['Spawn1'].spawning.name];
-        Game.spawns['Spawn1'].room.visual.text(
-            '🛠️' + spawningCreep.memory.role,
-            Game.spawns['Spawn1'].pos.x+1,
-            Game.spawns['Spawn1'].pos.y,
-            {align: 'left', opacity: 0.8});
-    }
+    // Display spawning creep info in room
+    // if(Game.spawns['Spawn1'].spawning){
+    //     spawnManagement.displaySpawnInfo('Spawn1');
+    // }
 
     /**
      * The main loop takes a list of all available creeps and performs an

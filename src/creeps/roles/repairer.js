@@ -24,8 +24,9 @@ var roleRepairer = {
         // Currently sorting each tick and repairing a different object each time until they are all the same health.
         // Needs to store an object id and then heal it until it is at full health
 	    if(creep.memory.repairing) {
+            // Repair all structures that are not walls
         	const targets = creep.room.find(FIND_STRUCTURES, {
-                filter: object => object.hits < object.hitsMax
+                filter: object => object.hits < object.hitsMax && object.structureType != STRUCTURE_WALL
             });
             
             targets.sort((a,b) => a.hits - b.hits);
@@ -33,6 +34,20 @@ var roleRepairer = {
             if(targets.length > 0) {
                 if(creep.repair(targets[0]) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(targets[0]);
+                }
+            }
+            // As a last resort target walls
+            else{
+                const targets = creep.room.find(FIND_STRUCTURES, {
+                    filter: object => object.hits < object.hitsMax && object.structureType == STRUCTURE_WALL
+                });
+                
+                targets.sort((a,b) => a.hits - b.hits);
+
+                if(targets.length > 0) {
+                    if(creep.repair(targets[0]) == ERR_NOT_IN_RANGE) {
+                        creep.moveTo(targets[0]);
+                    }
                 }
             }
 	    }
