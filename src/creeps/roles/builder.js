@@ -1,3 +1,4 @@
+var resourceManagement = require('creeps_functions_resourceManagement');
 var roleBuilder = {
 
     /** 
@@ -64,12 +65,12 @@ var roleBuilder = {
             }
         }
 	    else {
-            var source = creep.pos.findClosestByPath(FIND_SOURCES);
-            if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(source, { visualizePathStyle: { stroke: '#ffaa00' }, reusePath: 10 });
+            // if(resourceManagement.withdrawEnergy(creep) == -1);
+            if(resourceManagement.withdrawEnergy(creep) != 0){
+                resourceManagement.goHarvest(creep);
             }
-	    }
-	}
+        }
+    }
 };
 
 module.exports = roleBuilder;

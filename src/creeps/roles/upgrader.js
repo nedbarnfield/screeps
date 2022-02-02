@@ -1,3 +1,4 @@
+var resourceManagement = require('creeps_functions_resourceManagement');
 var roleUpgrader = {
     /**
      * @param {Creep} creep
@@ -13,6 +14,7 @@ var roleUpgrader = {
             creep.memory.upgrading = false;
             creep.say('🔄 harvest');
 	    }
+
 	    if(!creep.memory.upgrading && creep.store.getFreeCapacity() == 0) {
 	        creep.memory.upgrading = true;
 	        creep.say('🚧 upgrade');
@@ -24,9 +26,10 @@ var roleUpgrader = {
             }
         }
         else{
-            var source = creep.pos.findClosestByPath(FIND_SOURCES);
-            if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(source, { visualizePathStyle: { stroke: '#ffaa00' }, reusePath: 10 });
+            // resourceManagement.withdrawEnergy(creep);
+            // TODO: Needs to be fixed
+            if(resourceManagement.withdrawEnergy(creep) != 0){
+                resourceManagement.goHarvest(creep);
             }
         }
     }
