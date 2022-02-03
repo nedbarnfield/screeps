@@ -26,11 +26,7 @@ var roleUpgrader = {
             }
         }
         else{
-            // resourceManagement.withdrawEnergy(creep);
-            // TODO: Needs to be fixed
-            if(resourceManagement.withdrawEnergy(creep) != 0){
-                resourceManagement.goHarvest(creep);
-            }
+            resourceManagement.withdrawEnergy(creep);
         }
     }
 }

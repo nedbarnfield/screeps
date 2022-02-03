@@ -48,16 +48,16 @@ module.exports.loop = function () {
     // Spawn creeps and maintain workforce!
     var activeCreeps = Object.keys(Game.creeps).length;
     if(activeCreeps <= 10 && (Game.spawns['Spawn1'].room.energyAvailable == Game.spawns['Spawn1'].room.energyCapacityAvailable)){
-        if(harvesters.length != 5){
+        if(harvesters.length < 5){
             spawnManagement.spawnCreepsWrapper('Spawn1', 'harvester');
         }
-        else if(upgraders.length != 2){
+        else if(upgraders.length < 2){
             spawnManagement.spawnCreepsWrapper('Spawn1', 'upgrader');
         }
-        else if(repairers.length != 2){
+        else if(repairers.length < 2){
             spawnManagement.spawnCreepsWrapper('Spawn1', 'repairer');
         }
-        else if(builders.length != 1){
+        else if(builders.length < 1){
             spawnManagement.spawnCreepsWrapper('Spawn1', 'builder');
         }
     }
