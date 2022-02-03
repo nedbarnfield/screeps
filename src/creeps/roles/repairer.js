@@ -26,20 +26,20 @@ var roleRepairer = {
 	    if(creep.memory.repairing) {
             // Repair all structures that are not walls
         	const targets = creep.room.find(FIND_STRUCTURES, {
-                filter: object => object.hits < object.hitsMax && object.structureType != STRUCTURE_WALL
+                filter: object => object.hits < object.hitsMax && (object.structureType != STRUCTURE_WALL && object.structureType != STRUCTURE_ROAD && object.structureType != STRUCTURE_RAMPART)
             });
             
             targets.sort((a,b) => a.hits - b.hits);
-            
+            console.log(targets);
             if(targets.length > 0) {
                 if(creep.repair(targets[0]) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(targets[0]);
                 }
             }
-            // As a last resort target walls
+            // Defensive structures
             else{
                 const targets = creep.room.find(FIND_STRUCTURES, {
-                    filter: object => object.hits < object.hitsMax && object.structureType == STRUCTURE_WALL
+                    filter: object => object.hits < object.hitsMax && (object.structureType == STRUCTURE_WALL || object.structureType == STRUCTURE_ROAD || STRUCTURE_RAMPART)
                 });
                 
                 targets.sort((a,b) => a.hits - b.hits);
