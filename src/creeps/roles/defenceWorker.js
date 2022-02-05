@@ -1,7 +1,7 @@
 var resourceManagement = require('creeps_functions_resourceManagement');
 var structureManagement = require('creeps_functions_structureManagement');
 
-var roleRepairer = {
+var roleDefenceWorker = {
     /** 
      * @param {Creep} creep
      * A repairer will prioritise the repair of expansionary, road, and finally
@@ -21,12 +21,7 @@ var roleRepairer = {
 
         // Screep behaviour
 	    if(creep.memory.repairing) {
-            if(structureManagement.repairExpansionaryStructures(creep)){
-                structureManagement.repairRoads(creep);
-            };
-               
-                //     structureManagement.repairDefenceStructures(creep);
-                // }
+            structureManagement.repairDefenceStructures(creep)
 	    }
 	    else {
             resourceManagement.withdrawEnergy(creep);

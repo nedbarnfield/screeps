@@ -20,6 +20,7 @@ module.exports = {
             targets.sort((a,b) => a.hits - b.hits);
             if(creep.repair(targets[0]) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(targets[0]);
+                return 0;
             }
         }
         else{
@@ -29,13 +30,14 @@ module.exports = {
 
     repairDefenceStructures(creep){
         const targets = creep.room.find(FIND_STRUCTURES, {
-            filter: object => object.hits < object.hitsMax && (object.structureType == STRUCTURE_WALL || object.structureType == STRUCTURE_ROAD || STRUCTURE_RAMPART)
+            filter: object => object.hits < object.hitsMax && (object.structureType == STRUCTURE_WALL || object.structureType == STRUCTURE_RAMPART || object.structureType == STRUCTURE_TOWER)
         });
 
         if(targets.length > 0) {
             targets.sort((a,b) => a.hits - b.hits);
             if(creep.repair(targets[0]) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(targets[0]);
+                return 0;
             }
         }
         else{
@@ -52,9 +54,11 @@ module.exports = {
             targets.sort((a,b) => a.hits - b.hits);
             if(creep.repair(targets[0]) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(targets[0]);
+                return 0;
             }
         }
         else{
+            console.log('No roads to repair.')
             return -1;
         }
     }

@@ -51,12 +51,12 @@ module.exports.loop = function () {
         else if(upgraders.length < 2){
             spawnManagement.spawnCreepsWrapper('Spawn1', 'upgrader');
         }
-        else if(repairers.length < 2){
+        else if(repairers.length < 1){
             spawnManagement.spawnCreepsWrapper('Spawn1', 'repairer');
         }
-        // else if(builders.length < 1){
-        //     spawnManagement.spawnCreepsWrapper('Spawn1', 'builder');
-        // }
+        else if(builders.length < 1){
+            spawnManagement.spawnCreepsWrapper('Spawn1', 'builder');
+        }
     }
 
     // Display spawning creep info in room
