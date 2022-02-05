@@ -65,10 +65,7 @@ var roleBuilder = {
             }
         }
 	    else {
-            // if(resourceManagement.withdrawEnergy(creep) == -1);
-            if(resourceManagement.withdrawEnergy(creep) != 0){
-                resourceManagement.goHarvest(creep);
-            }
+            resourceManagement.withdrawEnergy(creep);
         }
     }
 };

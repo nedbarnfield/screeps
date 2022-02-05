@@ -17,17 +17,18 @@ module.exports.loop = function () {
     }
 
     // TODO: Implement a defend and grow method to prioritise defence (restocking energy to towers, ramparts, etc) when attackers are detected
-    // for(roomName in Game.rooms){
-    //     var hostiles = Game.rooms[roomName].find(FIND_HOSTILE_CREEPS);
-    //     if(hostiles.length > 0){
-    //         var username = hostiles[0].owner.username;
-    //         Game.notify(`User ${username} spotted in room ${roomName}`);
-    //         defendRoom(roomName);
-    //     }
-    //     else{
-    //         growRoom(roomName);
-    //     }
-    // }
+    for(roomName in Game.rooms){
+        var hostiles = Game.rooms[roomName].find(FIND_HOSTILE_CREEPS);
+        if(hostiles.length > 0){
+            var towers = Game.rooms[roomName].find(
+                FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_TOWER}});
+            towers.forEach(tower => tower.attack(hostiles[0]));
+            // defendRoom(roomName);
+        }
+        // else{
+        //     growRoom(roomName);
+        // }
+    }
 
     // Maintain constant workforce
     var harvesters = _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester');
@@ -36,10 +37,6 @@ module.exports.loop = function () {
     var repairers = _.filter(Game.creeps, (creep) => creep.memory.role == 'repairer');
     // TODO: Create a container/roadworker class - have 1 of each repair and roadworker
     // TODO: Needs to be spawn agnostic
-    var towers = Game.spawns['Spawn1'].room.find(FIND_MY_STRUCTURES, {
-        filter: { structureType: STRUCTURE_TOWER }
-    });
-
     // Report on room stats
     if(Game.time % 10 == 0){
         spawnManagement.spawnReporting('Spawn1');
@@ -47,8 +44,8 @@ module.exports.loop = function () {
 
     // Spawn creeps and maintain workforce!
     var activeCreeps = Object.keys(Game.creeps).length;
-    if(activeCreeps <= 10 && (Game.spawns['Spawn1'].room.energyAvailable == Game.spawns['Spawn1'].room.energyCapacityAvailable)){
-        if(harvesters.length < 5){
+    if(activeCreeps <= 7 && (Game.spawns['Spawn1'].room.energyAvailable == Game.spawns['Spawn1'].room.energyCapacityAvailable)){
+        if(harvesters.length < 3){
             spawnManagement.spawnCreepsWrapper('Spawn1', 'harvester');
         }
         else if(upgraders.length < 2){
@@ -57,9 +54,9 @@ module.exports.loop = function () {
         else if(repairers.length < 2){
             spawnManagement.spawnCreepsWrapper('Spawn1', 'repairer');
         }
-        else if(builders.length < 1){
-            spawnManagement.spawnCreepsWrapper('Spawn1', 'builder');
-        }
+        // else if(builders.length < 1){
+        //     spawnManagement.spawnCreepsWrapper('Spawn1', 'builder');
+        // }
     }
 
     // Display spawning creep info in room
@@ -88,7 +85,4 @@ module.exports.loop = function () {
             roleRepairer.run(creep);
         }
     }
-
-    // Attack the nearest enemy if any.
-    towers.forEach((tower) => towerAttack.run(tower));
 }
