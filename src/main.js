@@ -44,7 +44,7 @@ module.exports.loop = function () {
 
     // Spawn creeps and maintain workforce!
     var activeCreeps = Object.keys(Game.creeps).length;
-    if(activeCreeps <= 7 && (Game.spawns['Spawn1'].room.energyAvailable == Game.spawns['Spawn1'].room.energyCapacityAvailable)){
+    if(activeCreeps <=  7 && (Game.spawns['Spawn1'].room.energyAvailable == Game.spawns['Spawn1'].room.energyCapacityAvailable)){
         if(harvesters.length < 3){
             spawnManagement.spawnCreepsWrapper('Spawn1', 'harvester');
         }

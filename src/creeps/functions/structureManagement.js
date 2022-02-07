@@ -2,9 +2,11 @@ const { add } = require("lodash");
 
 module.exports = {
     repairStructures(creep){
-        if(!this.repairExpansionaryStructures(creep)){
-            if(!this.repairRoads(creep)){
-                this.repairDefenceStructures(creep);
+        if(this.repairExpansionaryStructures(creep) != 0){
+            if(this.repairRoads(creep) != 0){
+                if(this.repairDefenceStructures(creep) != 0){
+                    this.repairWalls(creep);
+                };
             }
         }
     },
@@ -30,7 +32,24 @@ module.exports = {
 
     repairDefenceStructures(creep){
         const targets = creep.room.find(FIND_STRUCTURES, {
-            filter: object => object.hits < object.hitsMax && (object.structureType == STRUCTURE_WALL || object.structureType == STRUCTURE_RAMPART || object.structureType == STRUCTURE_TOWER)
+            filter: object => object.hits < object.hitsMax && (object.structureType == STRUCTURE_RAMPART || object.structureType == STRUCTURE_TOWER)
+        });
+
+        if(targets.length > 0) {
+            targets.sort((a,b) => a.hits - b.hits);
+            if(creep.repair(targets[0]) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(targets[0]);
+                return 0;
+            }
+        }
+        else{
+            return -1;
+        }
+    },
+
+    repairWalls(creep){
+        const targets = creep.room.find(FIND_STRUCTURES, {
+            filter: object => object.hits < object.hitsMax && object.structureType == STRUCTURE_WALL 
         });
 
         if(targets.length > 0) {
