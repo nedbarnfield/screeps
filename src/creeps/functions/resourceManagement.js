@@ -2,9 +2,28 @@ const { add } = require("lodash");
 
 module.exports = {
     goHarvest(creep){
-        var source = creep.pos.findClosestByPath(FIND_SOURCES_ACTIVE);
-        if(creep.harvest(source) == ERR_NOT_IN_RANGE){
-            creep.moveTo(source, { visualizePathStyle: { stroke: '#ffaa00' }, reusePath: 5 });
+        // Collect dropped resources from my creeps that have died
+        // var droppedResources = creep.pos.findClosestByPath(FIND_TOMBSTONES, {
+        //     filter: (tombstone) => {
+        //         return(tombstone.store.getFreeCapacity(RESOURCE_ENERGY) != 0 &&
+        //         tombstone.creep.my);
+        //     }
+        // });
+
+        // Collect dropped resources from my creeps that have died
+        var droppedResources = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 10);
+        if(droppedResources.length > 0){
+            if(creep.pickup(droppedResources[0]) == ERR_NOT_IN_RANGE){
+                creep.moveTo(droppedResources[0], { visualizePathStyle: { stroke: '#ffaa00' }, reusePath: 5 });
+            }
+        }
+
+        // If there are no dropped resources collect from source
+        else{
+            var source = creep.pos.findClosestByPath(FIND_SOURCES_ACTIVE);
+            if(creep.harvest(source) == ERR_NOT_IN_RANGE){
+                creep.moveTo(source, { visualizePathStyle: { stroke: '#ffaa00' }, reusePath: 5 });
+            }
         }
     },
 
