@@ -31,6 +31,7 @@ module.exports.loop = function () {
     }
 
     // Maintain constant workforce
+    var activeCreeps = Object.keys(Game.creeps).length; 
     var harvesters = _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester');
     var upgraders = _.filter(Game.creeps, (creep) => creep.memory.role == 'upgrader');
     var builders = _.filter(Game.creeps, (creep) => creep.memory.role == 'builder');
@@ -43,8 +44,11 @@ module.exports.loop = function () {
     }
 
     // Spawn creeps and maintain workforce!
-    var activeCreeps = Object.keys(Game.creeps).length;
-    if(activeCreeps <=  7 && (Game.spawns['Spawn1'].room.energyAvailable == Game.spawns['Spawn1'].room.energyCapacityAvailable)){
+    if(activeCreeps < 3 && harvesters.length < 3){
+        // Starter creeps and recovery after destruction
+        spawnManagement.startingSpawnCreepsWrapper('Spawn1', [CARRY, WORK, MOVE], 'harvester');
+    }
+    else if(activeCreeps <=  7 && (Game.spawns['Spawn1'].room.energyAvailable == Game.spawns['Spawn1'].room.energyCapacityAvailable)){
         if(harvesters.length < 3){
             spawnManagement.spawnCreepsWrapper('Spawn1', 'harvester');
         }

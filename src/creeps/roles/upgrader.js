@@ -26,6 +26,8 @@ var roleUpgrader = {
             }
         }
         else{
+            // TODO: Needs to pick up dropped resources.
+            // Abstract dropped resource function and put here 
             resourceManagement.withdrawEnergy(creep);
         }
     }

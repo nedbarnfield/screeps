@@ -26,6 +26,18 @@ module.exports = {
         Game.spawns[spawn].spawnCreep(creepParts, newName, {memory: {role: creepRole}});
     },
 
+    startingSpawnCreepsWrapper(spawn, creepParts, creepRole){
+        /**
+         * @param spawn: The spawn from which you will create a creep
+         * @param creepParts: An array of body parts i.e. WORK, CARRY
+         * @param creepRole: The role the creep will perform at runtime
+         * 
+         * This simple wrapper ensure a new name is allocated to the new creep.
+         */
+        var newName = creepRole + Game.time;
+        Game.spawns[spawn].spawnCreep(creepParts, newName, {memory: {role: creepRole}});
+    },
+
     spawnReporting(spawn){
         // TODO: Needs to be creeps specific to spawn
         var activeCreeps = Object.keys(Game.creeps).length;
